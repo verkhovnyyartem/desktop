@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 name: Windows Build and Test
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review, closed]
 
@@ -11,7 +12,7 @@ concurrency:
 
 jobs:
   build:
-    if: ${{ github.event.action != 'closed' && !github.event.pull_request.draft }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.action != 'closed' && !github.event.pull_request.draft) }}
     name: Windows Build and Test
     runs-on: windows-2022
     env:
@@ -125,7 +126,7 @@ jobs:
               if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
           }
           
-          craft --src-dir ${{ github.workspace }} nextcloud-client
+          craft --src-dir ${{ github.workspace }} --options nextcloud-client.versionSuffix=bulk1 nextcloud-client
           
       - name: Run tests
         shell: pwsh
@@ -141,3 +142,25 @@ jobs:
           }
           
           runTests
+
+      - name: Package Windows installer
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        run: |
+          function craft() {
+              python "${{ env.CRAFT_MASTER_LOCATION }}\CraftMaster.py" --config "${{ env.CRAFT_MASTER_CONFIG }}" --target ${{ env.CRAFT_TARGET }} -c $args
+              if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+          }
+
+          craft --options nextcloud-client.versionSuffix=bulk1 --package nextcloud-client
+
+      - name: Upload Windows installer
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Nextcloud-34.0.5-bulk1-Windows-x64
+          path: |
+            ${{ github.workspace }}\${{ env.CRAFT_TARGET }}\tmp\*.exe
+            ${{ github.workspace }}\${{ env.CRAFT_TARGET }}\tmp\*.sha256
+          if-no-files-found: error
+          retention-days: 7
