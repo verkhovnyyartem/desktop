@@ -160,8 +160,6 @@ private Q_SLOTS:
     }
 
     void testDirUploadWithDelayedAlgorithm() {
-        QSKIP("bulk upload is disabled");
-
         FakeFolder fakeFolder{FileInfo::A12_B12_C12_S12()};
         fakeFolder.syncEngine().account()->setCapabilities({ { "dav", QVariantMap{ {"bulkupload", "1.0"} } } });
 
@@ -193,8 +191,6 @@ private Q_SLOTS:
     }
 
     void testDirUploadWithDelayedAlgorithmWithNewChecksum() {
-        QSKIP("bulk upload is disabled");
-
         FakeFolder fakeFolder{FileInfo::A12_B12_C12_S12()};
         fakeFolder.setServerVersion(QStringLiteral("32.0.0"));
         fakeFolder.syncEngine().account()->setCapabilities({ { "dav", QVariantMap{ {"bulkupload", "1.0"} } } });
@@ -1005,8 +1001,6 @@ private Q_SLOTS:
      */
     void testErrorsWithBulkUpload()
     {
-        QSKIP("bulk upload is disabled");
-
         FakeFolder fakeFolder{ FileInfo::A12_B12_C12_S12() };
         fakeFolder.syncEngine().account()->setCapabilities({ { "dav", QVariantMap{ {"bulkupload", "1.0"} } } });
 
@@ -1102,8 +1096,6 @@ private Q_SLOTS:
      */
     void testNetworkErrorsWithBulkUpload()
     {
-        QSKIP("bulk upload is disabled");
-
         FakeFolder fakeFolder{ FileInfo::A12_B12_C12_S12() };
         fakeFolder.syncEngine().account()->setCapabilities({ { "dav", QVariantMap{ {"bulkupload", "1.0"} } } });
 
@@ -1152,8 +1144,6 @@ private Q_SLOTS:
 
     void testNetworkErrorsWithSmallerBatchSizes()
     {
-        QSKIP("bulk upload is disabled");
-
         FakeFolder fakeFolder{ FileInfo::A12_B12_C12_S12() };
         fakeFolder.syncEngine().account()->setCapabilities({ { "dav", QVariantMap{ {"bulkupload", "1.0"} } } });
 
@@ -1479,8 +1469,6 @@ private Q_SLOTS:
 
     void testLocalInvalidMtimeCorrectionBulkUpload()
     {
-        QSKIP("bulk upload is disabled");
-
         const auto INVALID_MTIME = QDateTime::fromSecsSinceEpoch(0);
         const auto RECENT_MTIME = QDateTime::fromSecsSinceEpoch(1743004783); // 2025-03-26T16:59:43+0100
 
